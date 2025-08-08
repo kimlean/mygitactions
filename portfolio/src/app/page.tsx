@@ -164,7 +164,7 @@ export default function Home() {
                   <span className="text-white text-2xl">🏛️</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Bachelor's Degree in Computer Science</h3>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Bachelor&apos;s Degree in Computer Science</h3>
                   <p className="text-yellow-700 font-semibold text-lg mb-1">Royal University of Phnom Penh</p>
                   <p className="text-gray-600 text-sm">🇰🇭 Cambodia • 2020 - 2022</p>
                 </div>
@@ -338,10 +338,10 @@ export default function Home() {
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mr-4">
                 <span className="text-4xl">🤝</span>
               </div>
-              <h2 className="text-4xl font-bold">Let's Connect</h2>
+              <h2 className="text-4xl font-bold">Let&apos;s Connect</h2>
             </div>
             <p className="text-xl mb-8 text-white/90">
-              Interested in collaboration or have a project in mind? Let's discuss!
+              Interested in collaboration or have a project in mind? Let&apos;s discuss!
             </p>
             <div className="flex justify-center space-x-6">
               <a 
