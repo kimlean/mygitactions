@@ -38,42 +38,39 @@ jobs:
       run: npx tsc --noEmit
 
   deploy:
-  needs: test  # Ensures that the 'test' job must succeed first
-  runs-on: ubuntu-latest  # Use a GitHub-hosted runner with Ubuntu
-
-  if: github.ref == 'refs/heads/main' && github.event_name == 'push'  # Ensure this runs only on pushes to the main branch
-
-  steps:
-    # Step 1: Checkout the code from the repository
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
     - name: Checkout code
-      uses: actions/checkout@v4  # Use the latest checkout action
+      uses: actions/checkout@v4
 
-    # Step 2: Deploy to server using SSH
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        envs: GITHUB_TOKEN
         script: |
           # Create project directory if it doesn't exist
           mkdir -p ~/mygitactions
           cd ~/mygitactions
-
+          
           # Clone or pull latest changes with authentication
           if [ ! -d ".git" ]; then
             git clone https://${GITHUB_TOKEN}@github.com/${{ github.repository }}.git .
           else
             git pull https://${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main
           fi
-
+          
           # Build and deploy with Docker
-          docker-compose down || true  # Stop and remove existing containers (ignore errors)
-          docker-compose build --no-cache  # Rebuild the containers without cache
-          docker-compose up -d  # Start the containers in detached mode
-
-          # Clean up unused Docker images
-          docker image prune -f  # Remove dangling images to free up space
-
+          docker compose down || true
+          docker compose build --no-cache
+          docker compose up -d
+          
+          # Clean up unused images
+          docker image prune -f
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}  # GitHub token to authenticate the pull
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
