@@ -1,4 +1,4 @@
-name: Integration Tests
+name: Integration
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
       run: npx tsc --noEmit
 
   deploy:
-    needs: test
+    needs: deployed
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
@@ -53,16 +53,21 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Navigate to project directory
-          cd /mygitactions
+          # Create project directory if it doesn't exist
+          mkdir -p ~/mygitactions
+          cd ~/mygitactions
           
-          # Pull latest changes
-          git pull origin main
+          # Clone or pull latest changes
+          if [ ! -d ".git" ]; then
+            git clone https://github.com/${{ github.repository }} .
+          else
+            git pull origin main
+          fi
           
           # Build and deploy with Docker
-          docker-compose down
-          docker-compose build --no-cache
-          docker-compose up -d
+          docker compose down || true
+          docker compose build --no-cache
+          docker compose up -d
           
           # Clean up unused images
           docker image prune -f
