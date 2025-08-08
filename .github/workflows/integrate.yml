@@ -83,10 +83,15 @@ jobs:
           
           # Build and deploy with Docker
           docker compose down || true
+          
+          # Build the containers (fail if build fails)
           docker compose build --no-cache
+          
+          # Only start containers if build succeeded
           docker compose up -d
           
           # Clean up unused images
           docker image prune -f
+          
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

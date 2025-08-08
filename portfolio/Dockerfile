@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci && npm cache clean --force
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -15,7 +15,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Install additional dependencies needed for native modules
+RUN apk add --no-cache python3 make g++
+
 # Build the application
+ENV NODE_ENV=production
 RUN npm run build
 
 # Production image, copy all the files and run next
